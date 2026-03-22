@@ -75,27 +75,55 @@
     color: #999;
     margin-bottom: 16px;
   }
-  .copy-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
+  .drag-link {
+    display: inline-block;
     background: #FFC200;
     color: #1a1a2e;
-    border: none;
     padding: 12px 24px;
     border-radius: 8px;
     font-size: 15px;
     font-weight: 700;
+    text-decoration: none;
+    text-align: center;
+    width: 100%;
+    transition: background 0.2s, transform 0.1s;
+    cursor: grab;
+  }
+  .drag-link:hover { background: #e6af00; }
+  .drag-link:active { cursor: grabbing; transform: scale(0.98); }
+  .drag-hint {
+    font-size: 12px;
+    color: #888;
+    text-align: center;
+    margin-top: 8px;
+  }
+  .btn-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #2a2a4a;
+    color: #ccc;
+    border: 1px solid #444;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
     cursor: pointer;
     transition: background 0.2s, transform 0.1s;
-    width: 100%;
+    flex: 1;
     justify-content: center;
   }
-  .copy-btn:hover { background: #e6af00; }
+  .copy-btn:hover { background: #3a3a5a; color: #fff; }
   .copy-btn:active { transform: scale(0.98); }
   .copy-btn.copied {
     background: #4ade80;
     color: #1a1a2e;
+    border-color: #4ade80;
   }
   .notice {
     background: #1e1e3a;
@@ -142,32 +170,24 @@
   <h1>rofan.ai 대화 추출기</h1>
   <p class="subtitle">긴 대화 내역을 한 번의 클릭으로 텍스트 파일로 저장합니다.</p>
 
-  <h2>사용법</h2>
+  <h2>사용법 (간편 설치)</h2>
 
   <div class="step">
     <div class="step-num">1</div>
     <div class="step-text">
-      아래에서 원하는 버전의 <strong>코드 복사</strong> 버튼을 클릭합니다.
+      아래에서 원하는 버전의 <strong>버튼을 북마크바로 드래그</strong>하면 설치 완료!
     </div>
   </div>
 
   <div class="step">
     <div class="step-num">2</div>
     <div class="step-text">
-      브라우저 <strong>북마크바</strong>에서 우클릭 → <strong>페이지 추가</strong> (또는 북마크 추가)를 선택합니다.<br>
-      이름은 자유롭게, <strong>URL 란에 복사한 코드를 붙여넣기</strong>합니다.
+      <strong>rofan.ai</strong>에서 저장하고 싶은 대화 페이지를 열고, 북마크바의 <strong>버튼을 클릭</strong>합니다.
     </div>
   </div>
 
   <div class="step">
     <div class="step-num">3</div>
-    <div class="step-text">
-      <strong>rofan.ai</strong>에서 저장하고 싶은 대화 페이지를 열고, 만든 <strong>북마크를 클릭</strong>합니다.
-    </div>
-  </div>
-
-  <div class="step">
-    <div class="step-num">4</div>
     <div class="step-text">
       자동으로 모든 대화를 로드한 뒤 <strong>.txt 파일이 다운로드</strong>됩니다.
     </div>
@@ -178,13 +198,21 @@
   <div class="version-card">
     <div class="version-title">기본 버전</div>
     <div class="version-desc">대화 전체를 그대로 추출합니다.</div>
-    <button class="copy-btn" onclick="copyCode('basic', this)">코드 복사</button>
+    <a id="drag-basic" class="drag-link" href="#">대화 추출</a>
+    <div class="drag-hint">이 버튼을 북마크바로 드래그하세요</div>
+    <div class="btn-row">
+      <button class="copy-btn" onclick="copyCode('basic', this)">코드 복사</button>
+    </div>
   </div>
 
   <div class="version-card">
     <div class="version-title">Clean 버전</div>
     <div class="version-desc">상황 요약 블록을 자동으로 제거하고 추출합니다.</div>
-    <button class="copy-btn" onclick="copyCode('clean', this)">코드 복사</button>
+    <a id="drag-clean" class="drag-link" href="#">대화 추출 (Clean)</a>
+    <div class="drag-hint">이 버튼을 북마크바로 드래그하세요</div>
+    <div class="btn-row">
+      <button class="copy-btn" onclick="copyCode('clean', this)">코드 복사</button>
+    </div>
   </div>
 
   <h2>참고사항</h2>
@@ -261,6 +289,14 @@ function copyCode(type, btn) {
     }, 2000);
   });
 }
+
+// 드래그 링크의 href 설정 (textarea 값 설정 후)
+document.getElementById('drag-basic').href = document.getElementById('code-basic').value;
+document.getElementById('drag-clean').href = document.getElementById('code-clean').value;
+
+// 페이지 내에서 클릭 시 실행 방지 (드래그만 허용)
+document.getElementById('drag-basic').addEventListener('click', function(e) { e.preventDefault(); alert('이 버튼을 북마크바로 드래그하세요!'); });
+document.getElementById('drag-clean').addEventListener('click', function(e) { e.preventDefault(); alert('이 버튼을 북마크바로 드래그하세요!'); });
 </script>
 </body>
 </html>
