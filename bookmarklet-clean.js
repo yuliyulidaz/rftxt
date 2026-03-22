@@ -93,16 +93,6 @@
     return null;
   }
 
-  // === UI 버튼 숨기기 (북마크/댓글/편집/삭제 등 오클릭 방지) ===
-  const uiToolbars = document.querySelectorAll('.justify-end.items-center');
-  const hiddenEls = [];
-  uiToolbars.forEach((el) => {
-    if (el.style.userSelect === 'none' || el.querySelector('svg')) {
-      hiddenEls.push({ el: el, display: el.style.display });
-      el.style.display = 'none';
-    }
-  });
-
   // === Step 1: 초기 스크롤 (∧ 버튼 출현 유도) ===
   updateStatus('대화 로딩 준비 중...', '스크롤하여 로드 버튼 탐색');
 
@@ -180,9 +170,6 @@
   }
 
   if (clickCount >= maxClicks) exitReason = '최대 클릭 ' + maxClicks + '회 도달';
-
-  // === 숨긴 UI 버튼 복원 ===
-  hiddenEls.forEach(({ el, display }) => { el.style.display = display; });
 
   updateStatus('텍스트 추출 중...');
   await delay(500);
