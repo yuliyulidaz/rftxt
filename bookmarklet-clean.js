@@ -191,6 +191,7 @@
     const clone = el.cloneNode(true);
     // 🗂️상황 요약 블록 제거 (details/summary)
     clone.querySelectorAll('details').forEach((d) => d.remove());
+    clone.querySelectorAll('sub').forEach((s) => s.remove());
     clone.querySelectorAll('br').forEach((br) => {
       br.replaceWith('\n');
     });
