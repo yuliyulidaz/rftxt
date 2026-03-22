@@ -14,7 +14,7 @@
     min-height: 100vh;
   }
   .container {
-    max-width: 720px;
+    max-width: 820px;
     margin: 0 auto;
     padding: 40px 20px 60px;
   }
@@ -57,12 +57,20 @@
   }
   .step-text { flex: 1; }
   .step-text strong { color: #fff; }
+  .version-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
   .version-card {
     background: #16213e;
     border: 1px solid #333;
     border-radius: 12px;
     padding: 24px;
-    margin-bottom: 20px;
+    flex: 1;
+  }
+  @media (max-width: 600px) {
+    .version-row { flex-direction: column; }
   }
   .version-title {
     font-size: 18px;
@@ -195,23 +203,25 @@
 
   <h2>버전 선택</h2>
 
-  <div class="version-card">
-    <div class="version-title">기본 버전</div>
-    <div class="version-desc">대화 전체를 그대로 추출합니다.</div>
-    <a id="drag-basic" class="drag-link" href="#">대화 추출</a>
-    <div class="drag-hint">이 버튼을 북마크바로 드래그하세요</div>
-    <div class="btn-row">
-      <button class="copy-btn" onclick="copyCode('basic', this)">코드 복사</button>
+  <div class="version-row">
+    <div class="version-card">
+      <div class="version-title">기본 버전</div>
+      <div class="version-desc">대화 전체를 그대로 추출합니다.</div>
+      <a id="drag-basic" class="drag-link" href="#">대화 추출</a>
+      <div class="drag-hint">이 버튼을 북마크바로 드래그하세요</div>
+      <div class="btn-row">
+        <button class="copy-btn" onclick="copyCode('basic', this)">코드 복사</button>
+      </div>
     </div>
-  </div>
 
-  <div class="version-card">
-    <div class="version-title">Clean 버전</div>
-    <div class="version-desc">상황 요약 블록을 자동으로 제거하고 추출합니다.</div>
-    <a id="drag-clean" class="drag-link" href="#">대화 추출 (Clean)</a>
-    <div class="drag-hint">이 버튼을 북마크바로 드래그하세요</div>
-    <div class="btn-row">
-      <button class="copy-btn" onclick="copyCode('clean', this)">코드 복사</button>
+    <div class="version-card">
+      <div class="version-title">Clean 버전</div>
+      <div class="version-desc">상황 요약 블록을 자동으로 제거하고 추출합니다.</div>
+      <a id="drag-clean" class="drag-link" href="#">대화 추출 (Clean)</a>
+      <div class="drag-hint">이 버튼을 북마크바로 드래그하세요</div>
+      <div class="btn-row">
+        <button class="copy-btn" onclick="copyCode('clean', this)">코드 복사</button>
+      </div>
     </div>
   </div>
 
