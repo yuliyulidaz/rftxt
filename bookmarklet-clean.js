@@ -1,9 +1,10 @@
 /**
  * rofan.ai 대화 추출 북마클릿 v4-clean
- * 기본 버전 + 상황 요약 제거
+ * 기본 버전 + 상황 요약 제거 + <sub> 제거
  *
  * 변경점:
- * 1. 🗂️상황 요약 블록 제거
+ * 1. 🗂️상황 요약 블록 제거 (details/summary DOM + 텍스트 후처리)
+ * 2. <sub> 태그 내용 제거
  */
 (async function () {
   // === 오버레이 UI ===
@@ -13,16 +14,21 @@
     'color:#fff;display:flex;align-items:center;justify-content:center;z-index:99999;' +
     'font-size:18px;font-family:sans-serif;flex-direction:column;gap:12px;';
   const statusText = document.createElement('div');
-  statusText.textContent = '대화 로딩 중...';
+  statusText.textContent = '소중한 순간을 모두 불러오는 중.';
+  const statusText2 = document.createElement('div');
+  statusText2.textContent = '이대로 가만히 기다려주세요.';
+  statusText2.style.fontSize = '16px';
   const progressText = document.createElement('div');
   progressText.style.fontSize = '14px';
   progressText.style.opacity = '0.7';
   overlay.appendChild(statusText);
+  overlay.appendChild(statusText2);
   overlay.appendChild(progressText);
   document.body.appendChild(overlay);
 
-  function updateStatus(msg, detail) {
+  function updateStatus(msg, msg2, detail) {
     statusText.textContent = msg;
+    if (msg2 !== undefined) statusText2.textContent = msg2;
     if (detail !== undefined) progressText.textContent = detail;
   }
 
@@ -93,8 +99,38 @@
     return null;
   }
 
+  // === UI 요소 숨기기 (오클릭 방지) ===
+  const hiddenElements = [];
+
+  function hideUIElements() {
+    container.querySelectorAll('.justify-end.items-center').forEach((toolbar) => {
+      if (toolbar.style.display !== 'none' && (toolbar.style.userSelect === 'none' || toolbar.querySelector('svg'))) {
+        hiddenElements.push({ el: toolbar, prev: toolbar.style.display });
+        toolbar.style.display = 'none';
+      }
+    });
+    document.querySelectorAll('button[title="이미지 보기"], button[title="설정"]').forEach((btn) => {
+      if (btn.style.display !== 'none') {
+        hiddenElements.push({ el: btn, prev: btn.style.display });
+        btn.style.display = 'none';
+      }
+    });
+    document.querySelectorAll('header button').forEach((btn) => {
+      if (btn.style.display !== 'none' && !hiddenElements.some(h => h.el === btn)) {
+        hiddenElements.push({ el: btn, prev: btn.style.display });
+        btn.style.display = 'none';
+      }
+    });
+  }
+
+  function restoreUIElements() {
+    hiddenElements.forEach(({ el, prev }) => { el.style.display = prev; });
+  }
+
+  hideUIElements();
+
   // === Step 1: 초기 스크롤 (∧ 버튼 출현 유도) ===
-  updateStatus('대화 로딩 준비 중...', '스크롤하여 로드 버튼 탐색');
+  updateStatus('대화 로딩 준비 중...', '', '스크롤하여 로드 버튼 탐색');
 
   for (let i = 0; i < 10; i++) {
     container.scrollTop = 0;
@@ -116,7 +152,7 @@
     }
     for (let i = 0; i < 25; i++) {
       await delay(1000);
-      updateStatus('대화 로딩 중...', clickCount + '회 클릭 | 로딩 대기 ' + (i + 1) + '/25초 | 높이: ' + container.scrollHeight + 'px');
+      updateStatus('소중한 순간을 모두 불러오는 중.', '이대로 가만히 기다려주세요.', clickCount + '회 클릭 | 로딩 대기 ' + (i + 1) + '/25초');
       if (findUpButton()) return true;
     }
     return false;
@@ -127,7 +163,7 @@
     if (!upBtn) {
       for (let i = 0; i < 15; i++) {
         await delay(1000);
-        updateStatus('대화 로딩 중...', '버튼 대기 ' + (i + 1) + '/15초 (클릭 ' + clickCount + '회)');
+        updateStatus('소중한 순간을 모두 불러오는 중.', '이대로 가만히 기다려주세요.', '버튼 대기 ' + (i + 1) + '/15초 (클릭 ' + clickCount + '회)');
         upBtn = findUpButton();
         if (upBtn) break;
       }
@@ -140,7 +176,7 @@
       if (!upBtn) {
         for (let i = 0; i < 10; i++) {
           await delay(1000);
-          updateStatus('스크롤이 최상단인지 확인 중...', (i + 1) + '/10초 | 클릭 ' + clickCount + '회');
+          updateStatus('모든 순간이 담겼는지 확인 중...', '', (i + 1) + '/10초 | 클릭 ' + clickCount + '회');
           upBtn = findUpButton();
           if (upBtn) break;
         }
@@ -153,13 +189,14 @@
 
     upBtn.click();
     clickCount++;
+    hideUIElements();
     const loaded = await waitForLoadComplete();
 
     if (!loaded) {
       let found = false;
       for (let i = 0; i < 10; i++) {
         await delay(1000);
-        updateStatus('스크롤이 최상단인지 확인 중...', (i + 1) + '/10초 | 클릭 ' + clickCount + '회');
+        updateStatus('모든 순간이 담겼는지 확인 중...', '', (i + 1) + '/10초 | 클릭 ' + clickCount + '회');
         if (findUpButton()) { found = true; break; }
       }
       if (!found) {
@@ -174,6 +211,19 @@
   updateStatus('텍스트 추출 중...');
   await delay(500);
 
+  // === 텍스트 추출 헬퍼: <br> → 줄바꿈 변환 + clean 전용 제거 ===
+  function extractText(el) {
+    const clone = el.cloneNode(true);
+    // [CLEAN] 🗂️상황 요약 블록 제거 (details/summary)
+    clone.querySelectorAll('details').forEach((d) => d.remove());
+    // [CLEAN] <sub> 태그 제거
+    clone.querySelectorAll('sub').forEach((s) => s.remove());
+    clone.querySelectorAll('br').forEach((br) => {
+      br.replaceWith('\n');
+    });
+    return clone.textContent.trim();
+  }
+
   // === UI 요소 필터링 ===
   function isUIElement(node) {
     let el = node;
@@ -186,26 +236,10 @@
     return false;
   }
 
-  // === 텍스트 추출 헬퍼: <br> → 줄바꿈 변환 ===
-  function extractText(el) {
-    const clone = el.cloneNode(true);
-    // 🗂️상황 요약 블록 제거 (details/summary)
-    clone.querySelectorAll('details').forEach((d) => d.remove());
-    clone.querySelectorAll('sub').forEach((s) => s.remove());
-    clone.querySelectorAll('br').forEach((br) => {
-      br.replaceWith('\n');
-    });
-    return clone.textContent.trim();
-  }
-
   // === [CLEAN] 🗂️상황 요약 텍스트 후처리 제거 ===
   function removeSummaryBlocks(text) {
-    // 🗂️상황 요약부터 블록 끝까지 제거 (여러 줄)
-    // 패턴: 🗂️상황 요약 ~ 다음 빈 줄 2개 또는 텍스트 끝
     let result = text.replace(/[\u25b6\u25bc]?\s*\ud83d\uddc2\ufe0f\s*\uc0c1\ud669 \uc694\uc57d[\s\S]*?(?=\n\n\n|\n\n[^\-\{\|\#\ud83d]|$)/g, '');
-    // 📌미래 약속 블록도 제거
     result = result.replace(/\#{0,3}\s*\ud83d\udccc\s*\ubbf8\ub798 \uc57d\uc18d[\s\S]*?(?=\n\n\n|\n\n[^\-\{\|\#]|$)/g, '');
-    // 남은 빈 줄 정리 (3개 이상 연속 → 2개로)
     result = result.replace(/\n{3,}/g, '\n\n');
     return result.trim();
   }
@@ -239,7 +273,7 @@
     return;
   }
 
-  // 🗂️상황 요약 후처리 제거
+  // [CLEAN] 🗂️상황 요약 후처리 제거
   let fullText = lines.join('\n\n');
   fullText = removeSummaryBlocks(fullText);
 
@@ -264,6 +298,7 @@
   URL.revokeObjectURL(url);
 
   // === 완료 ===
-  updateStatus('완료! ' + lines.length + '개 블록 추출됨', '종료: ' + exitReason + ' | ' + fileName);
+  restoreUIElements();
+  updateStatus('완료! ' + lines.length + '개 블록 추출됨', '', '종료: ' + exitReason + ' | ' + fileName);
   setTimeout(() => overlay.remove(), 3000);
 })();
