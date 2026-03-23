@@ -12,16 +12,21 @@
     'color:#fff;display:flex;align-items:center;justify-content:center;z-index:99999;' +
     'font-size:18px;font-family:sans-serif;flex-direction:column;gap:12px;';
   const statusText = document.createElement('div');
-  statusText.innerHTML = '소중한 순간을 모두 불러오는 중.<br>이대로 가만히 기다려주세요.';
+  statusText.textContent = '소중한 순간을 모두 불러오는 중.';
+  const statusText2 = document.createElement('div');
+  statusText2.textContent = '이대로 가만히 기다려주세요.';
+  statusText2.style.fontSize = '16px';
   const progressText = document.createElement('div');
   progressText.style.fontSize = '14px';
   progressText.style.opacity = '0.7';
   overlay.appendChild(statusText);
+  overlay.appendChild(statusText2);
   overlay.appendChild(progressText);
   document.body.appendChild(overlay);
 
-  function updateStatus(msg, detail) {
-    statusText.innerHTML = msg;
+  function updateStatus(msg, msg2, detail) {
+    statusText.textContent = msg;
+    if (msg2 !== undefined) statusText2.textContent = msg2;
     if (detail !== undefined) progressText.textContent = detail;
   }
 
@@ -131,7 +136,7 @@
   hideUIElements();
 
   // === Step 1: 초기 스크롤 (∧ 버튼 출현 유도) ===
-  updateStatus('대화 로딩 준비 중...', '스크롤하여 로드 버튼 탐색');
+  updateStatus('대화 로딩 준비 중...', '', '스크롤하여 로드 버튼 탐색');
 
   // 맨 위로 스크롤 시도
   for (let i = 0; i < 10; i++) {
@@ -157,7 +162,7 @@
     // Phase 2: 버튼이 다시 나타나거나 25초 경과할 때까지 대기
     for (let i = 0; i < 25; i++) {
       await delay(1000);
-      updateStatus('소중한 순간을 모두 불러오는 중.<br>이대로 가만히 기다려주세요.', clickCount + '회 클릭 | 로딩 대기 ' + (i + 1) + '/25초');
+      updateStatus('소중한 순간을 모두 불러오는 중.', '이대로 가만히 기다려주세요.', clickCount + '회 클릭 | 로딩 대기 ' + (i + 1) + '/25초');
       if (findUpButton()) return true; // 버튼 돌아옴 = 로딩 완료
     }
     return false; // 25초 동안 버튼 안 돌아옴
@@ -170,7 +175,7 @@
       // 로딩 중 버튼 사라진 상태 — 돌아올 때까지 대기
       for (let i = 0; i < 15; i++) {
         await delay(1000);
-        updateStatus('소중한 순간을 모두 불러오는 중.<br>이대로 가만히 기다려주세요.', '버튼 대기 ' + (i + 1) + '/15초 (클릭 ' + clickCount + '회)');
+        updateStatus('소중한 순간을 모두 불러오는 중.', '이대로 가만히 기다려주세요.', '버튼 대기 ' + (i + 1) + '/15초 (클릭 ' + clickCount + '회)');
         upBtn = findUpButton();
         if (upBtn) break;
       }
@@ -184,7 +189,7 @@
       if (!upBtn) {
         for (let i = 0; i < 10; i++) {
           await delay(1000);
-          updateStatus('모든 순간이 담겼는지 확인 중...', (i + 1) + '/10초 | 클릭 ' + clickCount + '회');
+          updateStatus('모든 순간이 담겼는지 확인 중...', '', (i + 1) + '/10초 | 클릭 ' + clickCount + '회');
           upBtn = findUpButton();
           if (upBtn) break;
         }
@@ -205,7 +210,7 @@
       let found = false;
       for (let i = 0; i < 10; i++) {
         await delay(1000);
-        updateStatus('모든 순간이 담겼는지 확인 중...', (i + 1) + '/10초 | 클릭 ' + clickCount + '회');
+        updateStatus('모든 순간이 담겼는지 확인 중...', '', (i + 1) + '/10초 | 클릭 ' + clickCount + '회');
         if (findUpButton()) { found = true; break; }
       }
       if (!found) {
@@ -298,6 +303,6 @@
 
   // === 완료 ===
   restoreUIElements();
-  updateStatus('완료! ' + lines.length + '개 블록 추출됨', '종료: ' + exitReason + ' | ' + fileName);
+  updateStatus('완료! ' + lines.length + '개 블록 추출됨', '', '종료: ' + exitReason + ' | ' + fileName);
   setTimeout(() => overlay.remove(), 3000);
 })();
