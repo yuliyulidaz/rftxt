@@ -12,7 +12,7 @@
     'color:#fff;display:flex;align-items:center;justify-content:center;z-index:99999;' +
     'font-size:18px;font-family:sans-serif;flex-direction:column;gap:12px;';
   const statusText = document.createElement('div');
-  statusText.textContent = '대화 로딩 중...';
+  statusText.innerHTML = '소중한 순간을 모두 불러오는 중.<br>이대로 가만히 기다려주세요.';
   const progressText = document.createElement('div');
   progressText.style.fontSize = '14px';
   progressText.style.opacity = '0.7';
@@ -21,7 +21,7 @@
   document.body.appendChild(overlay);
 
   function updateStatus(msg, detail) {
-    statusText.textContent = msg;
+    statusText.innerHTML = msg;
     if (detail !== undefined) progressText.textContent = detail;
   }
 
@@ -97,6 +97,39 @@
     return null;
   }
 
+  // === UI 요소 숨기기 (오클릭 방지) ===
+  const hiddenElements = [];
+
+  function hideUIElements() {
+    // 컨테이너 내 툴바 (북마크/댓글/편집/삭제/새로고침)
+    container.querySelectorAll('.justify-end.items-center').forEach((toolbar) => {
+      if (toolbar.style.display !== 'none' && (toolbar.style.userSelect === 'none' || toolbar.querySelector('svg'))) {
+        hiddenElements.push({ el: toolbar, prev: toolbar.style.display });
+        toolbar.style.display = 'none';
+      }
+    });
+    // 상단 헤더의 이미지 보기/설정 버튼
+    document.querySelectorAll('button[title="이미지 보기"], button[title="설정"]').forEach((btn) => {
+      if (btn.style.display !== 'none') {
+        hiddenElements.push({ el: btn, prev: btn.style.display });
+        btn.style.display = 'none';
+      }
+    });
+    // 상단 헤더의 점 세개 메뉴 버튼 (title 없는 헤더 내 버튼)
+    document.querySelectorAll('header button').forEach((btn) => {
+      if (btn.style.display !== 'none' && !hiddenElements.some(h => h.el === btn)) {
+        hiddenElements.push({ el: btn, prev: btn.style.display });
+        btn.style.display = 'none';
+      }
+    });
+  }
+
+  function restoreUIElements() {
+    hiddenElements.forEach(({ el, prev }) => { el.style.display = prev; });
+  }
+
+  hideUIElements();
+
   // === Step 1: 초기 스크롤 (∧ 버튼 출현 유도) ===
   updateStatus('대화 로딩 준비 중...', '스크롤하여 로드 버튼 탐색');
 
@@ -124,7 +157,7 @@
     // Phase 2: 버튼이 다시 나타나거나 25초 경과할 때까지 대기
     for (let i = 0; i < 25; i++) {
       await delay(1000);
-      updateStatus('대화 로딩 중...', clickCount + '회 클릭 | 로딩 대기 ' + (i + 1) + '/25초 | 높이: ' + container.scrollHeight + 'px');
+      updateStatus('소중한 순간을 모두 불러오는 중.<br>이대로 가만히 기다려주세요.', clickCount + '회 클릭 | 로딩 대기 ' + (i + 1) + '/25초');
       if (findUpButton()) return true; // 버튼 돌아옴 = 로딩 완료
     }
     return false; // 25초 동안 버튼 안 돌아옴
@@ -137,7 +170,7 @@
       // 로딩 중 버튼 사라진 상태 — 돌아올 때까지 대기
       for (let i = 0; i < 15; i++) {
         await delay(1000);
-        updateStatus('대화 로딩 중...', '버튼 대기 ' + (i + 1) + '/15초 (클릭 ' + clickCount + '회)');
+        updateStatus('소중한 순간을 모두 불러오는 중.<br>이대로 가만히 기다려주세요.', '버튼 대기 ' + (i + 1) + '/15초 (클릭 ' + clickCount + '회)');
         upBtn = findUpButton();
         if (upBtn) break;
       }
@@ -151,7 +184,7 @@
       if (!upBtn) {
         for (let i = 0; i < 10; i++) {
           await delay(1000);
-          updateStatus('스크롤이 최상단인지 확인 중...', (i + 1) + '/10초 | 클릭 ' + clickCount + '회');
+          updateStatus('모든 순간이 담겼는지 확인 중...', (i + 1) + '/10초 | 클릭 ' + clickCount + '회');
           upBtn = findUpButton();
           if (upBtn) break;
         }
@@ -165,13 +198,14 @@
     // 클릭 & 로딩 완료 대기
     upBtn.click();
     clickCount++;
+    hideUIElements();
     const loaded = await waitForLoadComplete();
 
     if (!loaded) {
       let found = false;
       for (let i = 0; i < 10; i++) {
         await delay(1000);
-        updateStatus('스크롤이 최상단인지 확인 중...', (i + 1) + '/10초 | 클릭 ' + clickCount + '회');
+        updateStatus('모든 순간이 담겼는지 확인 중...', (i + 1) + '/10초 | 클릭 ' + clickCount + '회');
         if (findUpButton()) { found = true; break; }
       }
       if (!found) {
@@ -263,6 +297,7 @@
   URL.revokeObjectURL(url);
 
   // === 완료 ===
+  restoreUIElements();
   updateStatus('완료! ' + lines.length + '개 블록 추출됨', '종료: ' + exitReason + ' | ' + fileName);
   setTimeout(() => overlay.remove(), 3000);
 })();
