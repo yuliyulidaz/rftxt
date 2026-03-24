@@ -14,26 +14,13 @@
     min-height: 100vh;
   }
 
-  /* === Header === */
-  .header {
-    padding: 56px 20px 40px;
-    text-align: center;
-  }
-  .header h1 {
-    font-size: 32px;
-    font-weight: 800;
-    color: #0f172a;
-    letter-spacing: -0.5px;
-  }
-  .header h1 span {
-    color: #10b981;
-  }
-  .header .subtitle {
+  /* === Subtitle & Badge (inside tab-body) === */
+  .subtitle {
     color: #64748b;
     font-size: 15px;
-    margin-top: 8px;
+    text-align: center;
   }
-  .header .badge {
+  .badge {
     display: inline-block;
     background: #ecfdf5;
     color: #059669;
@@ -41,7 +28,9 @@
     font-weight: 600;
     padding: 4px 12px;
     border-radius: 100px;
-    margin-top: 12px;
+    margin-top: 8px;
+    text-align: center;
+    width: 100%;
   }
 
   /* === Container (legacy) === */
@@ -310,7 +299,7 @@
   .tab-nav {
     display: flex;
     max-width: 760px;
-    margin: 0 auto;
+    margin: 40px auto 0;
     padding: 0 20px;
     gap: 4px;
     position: relative;
@@ -319,8 +308,8 @@
   }
   .tab-nav a {
     display: inline-block;
-    padding: 12px 32px;
-    font-size: 15px;
+    padding: 14px 28px;
+    font-size: 16px;
     font-weight: 600;
     text-decoration: none;
     color: #94a3b8;
@@ -329,6 +318,9 @@
     border-bottom: none;
     border-radius: 10px 10px 0 0;
     transition: background 0.2s, color 0.2s;
+  }
+  .tab-nav a span {
+    color: inherit;
   }
   .tab-nav a:hover {
     color: #475569;
@@ -339,6 +331,9 @@
     background: #fff;
     border-color: #e2e8f0;
     font-weight: 700;
+  }
+  .tab-nav a.active span {
+    color: #10b981;
   }
   .tab-body {
     max-width: 760px;
@@ -351,8 +346,7 @@
   }
 
   @media (max-width: 480px) {
-    .header { padding: 36px 16px 28px; }
-    .header h1 { font-size: 24px; }
+    .tab-nav { margin-top: 20px; }
     .tab-nav { padding: 0 16px; }
     .tab-nav a { padding: 10px 20px; font-size: 14px; }
     .tab-body { padding: 28px 16px 36px; border-radius: 0 6px 6px 6px; }
@@ -361,18 +355,16 @@
 </head>
 <body>
 
-<div class="header">
-  <h1>rofan.ai <span>대화 추출기</span></h1>
-  <p class="subtitle">긴 대화 내역을 한 번의 클릭으로 저장합니다.</p>
-  <div class="badge">PC 전용</div>
-</div>
-
 <div class="tab-nav">
-  <a href="index.html" class="active">추출기</a>
-  <a href="ebook.html">전자책</a>
+  <a href="index.html" class="active">ROFAN AI <span>대화 추출기</span></a>
+  <a href="ebook.html"><span>전자책</span> 만들기</a>
 </div>
 
 <div class="tab-body">
+
+  <p class="subtitle">긴 대화 내역을 한 번의 클릭으로 저장합니다.</p>
+  <div class="badge">PC 전용</div>
+  <div style="margin-bottom: 36px;"></div>
 
   <div class="section-label">사용법</div>
   <div class="steps">
