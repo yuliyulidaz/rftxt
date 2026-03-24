@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>rofan.ai 전자책 만들기</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #f8fafc;
+    color: #334155;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* === Header === */
+  .header {
+    padding: 56px 20px 40px;
+    text-align: center;
+  }
+  .header h1 {
+    font-size: 32px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.5px;
+  }
+  .header h1 span {
+    color: #10b981;
+  }
+  .header .subtitle {
+    color: #64748b;
+    font-size: 15px;
+    margin-top: 8px;
+  }
+  .header .badge {
+    display: inline-block;
+    background: #ecfdf5;
+    color: #059669;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 100px;
+    margin-top: 12px;
+  }
+
+  /* === Tab Navigation === */
+  .tab-nav {
+    display: flex;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 20px;
+    gap: 4px;
+    position: relative;
+    top: 1px;
+    z-index: 2;
+  }
+  .tab-nav a {
+    display: inline-block;
+    padding: 12px 32px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    color: #94a3b8;
+    background: #e2e8f0;
+    border: 1px solid #e2e8f0;
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+    transition: background 0.2s, color 0.2s;
+  }
+  .tab-nav a:hover {
+    color: #475569;
+    background: #f1f5f9;
+  }
+  .tab-nav a.active {
+    color: #0f172a;
+    background: #fff;
+    border-color: #e2e8f0;
+    font-weight: 700;
+  }
+  .tab-body {
+    max-width: 760px;
+    margin: 0 auto;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0 0 8px 8px;
+    padding: 40px 32px 48px;
+    min-height: 400px;
+  }
+
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    color: #94a3b8;
+  }
+  .empty-state .icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+  }
+  .empty-state p {
+    font-size: 15px;
+  }
+  .empty-state .sub {
+    font-size: 13px;
+    margin-top: 4px;
+  }
+
+  /* === Footer === */
+  footer {
+    text-align: center;
+    color: #94a3b8;
+    font-size: 12px;
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid #e2e8f0;
+  }
+  footer a {
+    color: #64748b;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  footer a:hover { color: #10b981; }
+
+  @media (max-width: 480px) {
+    .header { padding: 36px 16px 28px; }
+    .header h1 { font-size: 24px; }
+    .tab-nav { padding: 0 16px; }
+    .tab-nav a { padding: 10px 20px; font-size: 14px; }
+    .tab-body { padding: 28px 16px 36px; border-radius: 0 0 6px 6px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>rofan.ai <span>대화 추출기</span></h1>
+  <p class="subtitle">긴 대화 내역을 한 번의 클릭으로 저장합니다.</p>
+  <div class="badge">PC 전용</div>
+</div>
+
+<div class="tab-nav">
+  <a href="index.html">추출기</a>
+  <a href="ebook.html" class="active">전자책</a>
+</div>
+
+<div class="tab-body">
+
+  <div class="empty-state">
+    <div class="icon">📖</div>
+    <p>전자책 만들기 기능을 준비 중입니다.</p>
+    <p class="sub">TXT 파일을 EPUB으로 변환할 수 있습니다.</p>
+  </div>
+
+  <footer>
+    <a href="https://github.com/yuliyulidaz/rftxt" target="_blank">GitHub</a>
+  </footer>
+
+</div><!-- tab-body -->
+
+</body>
+</html>
