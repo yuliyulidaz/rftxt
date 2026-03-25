@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>rofan.ai 전자책 만들기</title>
+<title>전자책 만들기 - rofan.ai</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
@@ -14,6 +14,20 @@
     min-height: 100vh;
   }
 
+  .subtitle {
+    color: #64748b;
+    font-size: 15px;
+    text-align: center;
+  }
+
+  .section-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #10b981;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 20px;
+  }
 
   /* === Tab Navigation === */
   .tab-nav {
@@ -29,7 +43,7 @@
   .tab-nav a {
     display: inline-block;
     padding: 14px 28px;
-    font-size: 16px;
+    font-size: 20px;
     font-weight: 600;
     text-decoration: none;
     color: #94a3b8;
@@ -39,53 +53,112 @@
     border-radius: 10px 10px 0 0;
     transition: background 0.2s, color 0.2s;
   }
-  .tab-nav a span {
-    color: inherit;
-  }
-  .tab-nav a:hover {
-    color: #475569;
-    background: #f1f5f9;
-  }
-  .tab-nav a.active {
-    color: #0f172a;
-    background: #fff;
-    border-color: #e2e8f0;
-    font-weight: 700;
-  }
-  .tab-nav a.active span {
-    color: #10b981;
-  }
+  .tab-nav a span { color: inherit; }
+  .tab-nav a:hover { color: #475569; background: #f1f5f9; }
+  .tab-nav a.active { color: #0f172a; background: #fff; border-color: #e2e8f0; font-weight: 700; }
+  .tab-nav a.active span { color: #10b981; }
   .tab-body {
     max-width: 760px;
     margin: 0 auto;
     background: #fff;
     border: 1px solid #e2e8f0;
-    border-radius: 8px 0 8px 8px;
+    border-radius: 0 0 8px 8px;
     padding: 40px 32px 48px;
     min-height: 400px;
   }
 
-  .empty-state {
+  /* === Form === */
+  .form-group { margin-bottom: 24px; }
+  .form-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #0f172a;
+    margin-bottom: 8px;
+  }
+  .form-group input[type="text"],
+  .form-group textarea {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    color: #334155;
+    background: #fff;
+    font-family: inherit;
+    transition: border-color 0.2s;
+  }
+  .form-group input[type="text"]:focus,
+  .form-group textarea:focus { outline: none; border-color: #10b981; }
+  .form-group textarea { min-height: 200px; resize: vertical; line-height: 1.6; }
+  .form-group .hint { font-size: 12px; color: #94a3b8; margin-top: 6px; }
+
+  /* === Cover Upload === */
+  .cover-upload { display: flex; align-items: center; gap: 20px; margin-bottom: 24px; }
+  .cover-preview {
+    width: 120px;
+    height: 170px;
+    border: 2px dashed #e2e8f0;
+    border-radius: 4px;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 300px;
-    color: #94a3b8;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: #f8fafc;
+    cursor: pointer;
+    transition: border-color 0.2s;
   }
-  .empty-state .icon {
-    font-size: 48px;
-    margin-bottom: 16px;
-  }
-  .empty-state p {
-    font-size: 15px;
-  }
-  .empty-state .sub {
+  .cover-preview:hover { border-color: #10b981; }
+  .cover-preview img { width: 100%; height: 100%; object-fit: cover; display: none; }
+  .cover-preview .placeholder { text-align: center; color: #94a3b8; font-size: 12px; line-height: 1.4; }
+  .cover-info { flex: 1; }
+  .cover-info label { font-size: 14px; font-weight: 600; color: #0f172a; margin-bottom: 8px; display: block; }
+  .cover-info .hint { font-size: 12px; color: #94a3b8; margin-bottom: 12px; }
+  .cover-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+    padding: 8px 16px;
+    border-radius: 4px;
     font-size: 13px;
-    margin-top: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .cover-btn:hover { background: #e2e8f0; }
+  .cover-remove {
+    display: none;
+    background: none;
+    border: none;
+    color: #ef4444;
+    font-size: 12px;
+    cursor: pointer;
+    margin-left: 8px;
   }
 
-  /* === Footer === */
+  /* === Build Button === */
+  .build-btn {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    background: #10b981;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    margin-top: 32px;
+  }
+  .build-btn:hover { background: #059669; }
+  .build-btn:active { transform: scale(0.98); }
+  .build-btn:disabled { background: #94a3b8; cursor: not-allowed; }
+
   footer {
     text-align: center;
     color: #94a3b8;
@@ -94,18 +167,14 @@
     padding-top: 24px;
     border-top: 1px solid #e2e8f0;
   }
-  footer a {
-    color: #64748b;
-    text-decoration: none;
-    font-weight: 500;
-  }
+  footer a { color: #64748b; text-decoration: none; font-weight: 500; }
   footer a:hover { color: #10b981; }
 
   @media (max-width: 480px) {
-    .tab-nav { margin-top: 20px; }
-    .tab-nav { padding: 0 16px; }
-    .tab-nav a { padding: 10px 20px; font-size: 14px; }
+    .tab-nav { margin-top: 20px; padding: 0 16px; }
+    .tab-nav a { padding: 10px 20px; font-size: 17px; }
     .tab-body { padding: 28px 16px 36px; border-radius: 0 0 6px 6px; }
+    .cover-upload { flex-direction: column; align-items: flex-start; }
   }
 </style>
 </head>
@@ -118,17 +187,252 @@
 
 <div class="tab-body">
 
-  <div class="empty-state">
-    <div class="icon">📖</div>
-    <p>전자책 만들기 기능을 준비 중입니다.</p>
-    <p class="sub">TXT 파일을 EPUB으로 변환할 수 있습니다.</p>
+  <p class="subtitle">저장된 대화를 ePub으로 변환하여, 리디북스 등 이북 앱에서 편하게 볼 수 있습니다.</p>
+  <div style="margin-bottom: 36px;"></div>
+
+  <div class="section-label">표지 이미지</div>
+  <div class="cover-upload">
+    <div class="cover-preview" id="coverPreview" onclick="document.getElementById('coverInput').click()">
+      <img id="coverImg" alt="표지 미리보기">
+      <div class="placeholder" id="coverPlaceholder">클릭하여<br>이미지 선택</div>
+    </div>
+    <div class="cover-info">
+      <label>표지 이미지 (선택)</label>
+      <div class="hint">이북 앱에서 썸네일로 표시됩니다. JPG, PNG 권장.</div>
+      <button class="cover-btn" onclick="document.getElementById('coverInput').click()">파일 선택</button>
+      <button class="cover-remove" id="coverRemove" onclick="removeCover()">삭제</button>
+      <input type="file" id="coverInput" accept="image/*" style="display:none" onchange="handleCover(this)">
+    </div>
   </div>
+
+  <div class="section-label">메타데이터</div>
+  <div class="form-group">
+    <label>제목</label>
+    <input type="text" id="metaTitle" placeholder="작품 제목을 입력하세요">
+  </div>
+  <div class="form-group">
+    <label>저자</label>
+    <input type="text" id="metaAuthor" placeholder="저자명">
+  </div>
+  <div class="form-group">
+    <label>캐릭터</label>
+    <input type="text" id="metaCharacter" placeholder="캐릭터명 (선택)">
+    <div class="hint">타이틀 페이지에 표시됩니다.</div>
+  </div>
+
+  <div class="section-label">본문</div>
+  <div class="form-group">
+    <label>텍스트 내용</label>
+    <textarea id="bodyText" placeholder="추출한 .txt 파일의 내용을 붙여넣거나, 직접 입력하세요."></textarea>
+    <div class="hint">빈 줄은 문단 구분, *** 는 장면 전환으로 변환됩니다.</div>
+  </div>
+
+  <button class="build-btn" id="buildBtn" onclick="buildEpub()">이북 만들기</button>
 
   <footer>
     <a href="https://github.com/yuliyulidaz/rftxt" target="_blank">GitHub</a>
   </footer>
 
-</div><!-- tab-body -->
+</div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+const EpubBuilder = (() => {
+  const EPUB_CSS = `
+body, h1, h2, h3, p { margin: 0; padding: 0; }
+body { font-family: serif; line-height: 1.8; color: #1a1a1a; word-break: keep-all; overflow-wrap: break-word; }
+.title-page { display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 80vh; text-align: center; padding: 2em 1.5em; }
+.title-page .title { font-size: 1.6em; font-weight: bold; margin-bottom: 0.8em; letter-spacing: 0.02em; line-height: 1.4; }
+.title-page .author { font-size: 0.95em; color: #555; margin-bottom: 0.3em; }
+.title-page .character { font-size: 0.85em; color: #888; font-style: italic; }
+.title-page .separator { width: 2em; height: 1px; background: #ccc; margin: 1.2em auto; }
+.chapter-body { padding: 1em 0; }
+.chapter-body p { text-indent: 1em; margin-bottom: 0.5em; line-height: 1.8; text-align: justify; }
+.chapter-body p.no-indent { text-indent: 0; }
+.chapter-body p.empty-line { height: 1em; margin-bottom: 0; text-indent: 0; }
+.scene-break { border: none; text-align: center; margin: 1.5em 0; line-height: 1; }
+.scene-break::after { content: "***"; color: #aaa; font-size: 0.9em; letter-spacing: 0.3em; }
+.cover-page { text-align: center; padding: 0; margin: 0; }
+.cover-page img { max-width: 100%; max-height: 100%; object-fit: contain; }
+`.trim();
+
+  const generateUUID = () =>
+    'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+      const r = Math.random() * 16 | 0;
+      return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    });
+
+  const esc = (s) => s ? s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;') : '';
+
+  const textToHtml = (text) => {
+    if (!text) return '<p></p>';
+    return text.split('\n').map(line => {
+      const t = line.trim();
+      if (t === '***' || t === '* * *') return '    <hr class="scene-break" />';
+      if (t === '') return '    <p class="empty-line">&#160;</p>';
+      return `    <p>${esc(t)}</p>`;
+    }).join('\n');
+  };
+
+  const CONTAINER = '<?xml version="1.0" encoding="UTF-8"?>\n<container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">\n  <rootfiles>\n    <rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml" />\n  </rootfiles>\n</container>';
+
+  const opf = (uuid, title, author, hasCover) => {
+    const cm = hasCover ? '\n    <meta name="cover" content="cover-image" />' : '';
+    const cman = hasCover ? '\n    <item id="cover-image" href="images/cover.jpg" media-type="image/jpeg" properties="cover-image" />\n    <item id="cover" href="cover.xhtml" media-type="application/xhtml+xml" />' : '';
+    const csp = hasCover ? '\n    <itemref idref="cover" linear="yes" />' : '';
+    const cg = hasCover ? '\n  <guide>\n    <reference type="cover" title="\ud45c\uc9c0" href="cover.xhtml" />\n  </guide>' : '';
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<package xmlns="http://www.idpf.org/2007/opf" unique-identifier="BookId" version="3.0">
+  <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <dc:identifier id="BookId">urn:uuid:${uuid}</dc:identifier>
+    <dc:title>${esc(title||'\uc81c\ubaa9 \uc5c6\uc74c')}</dc:title>
+    <dc:creator>${esc(author||'\uc791\uc790 \ubbf8\uc0c1')}</dc:creator>
+    <dc:language>ko</dc:language>
+    <meta property="dcterms:modified">${new Date().toISOString().replace(/\.\d+Z$/,'Z')}</meta>${cm}
+  </metadata>
+  <manifest>
+    <item id="style" href="styles/style.css" media-type="text/css" />
+    <item id="nav" href="toc.xhtml" media-type="application/xhtml+xml" properties="nav" />
+    <item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml" />
+    <item id="titlepage" href="title.xhtml" media-type="application/xhtml+xml" />
+    <item id="chapter1" href="chapter.xhtml" media-type="application/xhtml+xml" />${cman}
+  </manifest>
+  <spine toc="ncx">${csp}
+    <itemref idref="titlepage" />
+    <itemref idref="chapter1" />
+  </spine>${cg}
+</package>`;
+  };
+
+  const ncx = (uuid, title) => `<?xml version="1.0" encoding="UTF-8"?>
+<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1">
+  <head><meta name="dtb:uid" content="urn:uuid:${uuid}" /></head>
+  <docTitle><text>${esc(title||'\uc81c\ubaa9 \uc5c6\uc74c')}</text></docTitle>
+  <navMap>
+    <navPoint id="titlepage" playOrder="1"><navLabel><text>\ud45c\uc9c0</text></navLabel><content src="title.xhtml" /></navPoint>
+    <navPoint id="chapter1" playOrder="2"><navLabel><text>\ubcf8\ubb38</text></navLabel><content src="chapter.xhtml" /></navPoint>
+  </navMap>
+</ncx>`;
+
+  const tocXhtml = (title) => `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" lang="ko">
+<head><meta charset="UTF-8" /><title>\ubaa9\ucc28</title><link rel="stylesheet" href="styles/style.css" /></head>
+<body><nav epub:type="toc"><h1>\ubaa9\ucc28</h1><ol>
+  <li><a href="title.xhtml">${esc(title||'\ud45c\uc9c0')}</a></li>
+  <li><a href="chapter.xhtml">\ubcf8\ubb38</a></li>
+</ol></nav></body></html>`;
+
+  const titlePage = (title, author, character) => {
+    const a = author ? `<p class="author">${esc(author)}</p>` : '';
+    const s = (author||character) ? '<div class="separator"></div>' : '';
+    const ch = character ? `<p class="character">${esc(character)}</p>` : '';
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko">
+<head><meta charset="UTF-8" /><title>${esc(title||'\uc81c\ubaa9 \uc5c6\uc74c')}</title><link rel="stylesheet" href="styles/style.css" /></head>
+<body><div class="title-page">
+  <h1 class="title">${esc(title||'\uc81c\ubaa9 \uc5c6\uc74c')}</h1>
+  ${s}${a}${ch}
+</div></body></html>`;
+  };
+
+  const chapter = (title, body) => `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko">
+<head><meta charset="UTF-8" /><title>${esc(title||'\ubcf8\ubb38')}</title><link rel="stylesheet" href="styles/style.css" /></head>
+<body><div class="chapter-body">
+${textToHtml(body)}
+</div></body></html>`;
+
+  const coverPage = () => `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko">
+<head><meta charset="UTF-8" /><title>\ud45c\uc9c0</title><link rel="stylesheet" href="styles/style.css" /></head>
+<body><div class="cover-page"><img src="images/cover.jpg" alt="\ud45c\uc9c0" /></div></body></html>`;
+
+  const build = async ({ title, author, character, bodyText, coverImageData }) => {
+    const uuid = generateUUID();
+    const hasCover = !!coverImageData;
+    const zip = new JSZip();
+    zip.file('mimetype', 'application/epub+zip', { compression: 'STORE' });
+    zip.file('META-INF/container.xml', CONTAINER);
+    zip.file('OEBPS/content.opf', opf(uuid, title, author, hasCover));
+    zip.file('OEBPS/toc.ncx', ncx(uuid, title));
+    zip.file('OEBPS/toc.xhtml', tocXhtml(title));
+    zip.file('OEBPS/styles/style.css', EPUB_CSS);
+    zip.file('OEBPS/title.xhtml', titlePage(title, author, character));
+    zip.file('OEBPS/chapter.xhtml', chapter(title, bodyText));
+    if (hasCover) {
+      zip.file('OEBPS/cover.xhtml', coverPage());
+      if (typeof coverImageData === 'string' && coverImageData.startsWith('data:')) {
+        zip.file('OEBPS/images/cover.jpg', coverImageData.split(',')[1], { base64: true });
+      } else {
+        zip.file('OEBPS/images/cover.jpg', coverImageData);
+      }
+    }
+    const blob = await zip.generateAsync({ type:'blob', mimeType:'application/epub+zip', compression:'DEFLATE', compressionOptions:{level:9} });
+    const fn = `${(title||'untitled').replace(/[^a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ_\-\s]/g,'').trim()}.epub`;
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = fn;
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    return true;
+  };
+
+  return { build };
+})();
+
+// UI
+let coverDataURL = null;
+
+function handleCover(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    coverDataURL = e.target.result;
+    document.getElementById('coverImg').src = coverDataURL;
+    document.getElementById('coverImg').style.display = 'block';
+    document.getElementById('coverPlaceholder').style.display = 'none';
+    document.getElementById('coverRemove').style.display = 'inline';
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeCover() {
+  coverDataURL = null;
+  document.getElementById('coverImg').style.display = 'none';
+  document.getElementById('coverImg').src = '';
+  document.getElementById('coverPlaceholder').style.display = 'block';
+  document.getElementById('coverRemove').style.display = 'none';
+  document.getElementById('coverInput').value = '';
+}
+
+async function buildEpub() {
+  const title = document.getElementById('metaTitle').value.trim();
+  const author = document.getElementById('metaAuthor').value.trim();
+  const character = document.getElementById('metaCharacter').value.trim();
+  const bodyText = document.getElementById('bodyText').value.trim();
+
+  if (!bodyText) { alert('본문 텍스트를 입력해주세요.'); return; }
+
+  const btn = document.getElementById('buildBtn');
+  btn.disabled = true;
+  btn.textContent = '생성 중...';
+
+  try {
+    await EpubBuilder.build({ title: title || '제목 없음', author, character, bodyText, coverImageData: coverDataURL });
+    btn.textContent = '완료!';
+    setTimeout(() => { btn.disabled = false; btn.textContent = '이북 만들기'; }, 2000);
+  } catch (err) {
+    alert('오류가 발생했습니다: ' + err.message);
+    btn.disabled = false;
+    btn.textContent = '이북 만들기';
+  }
+}
+</script>
 </body>
 </html>
