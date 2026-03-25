@@ -222,9 +222,14 @@
 
   <div class="section-label">본문</div>
   <div class="form-group">
-    <label>텍스트 내용</label>
-    <textarea id="bodyText" placeholder="추출한 .txt 파일의 내용을 붙여넣거나, 직접 입력하세요."></textarea>
-    <div class="hint">빈 줄은 문단 구분, *** 는 장면 전환으로 변환됩니다.</div>
+    <label>TXT 파일 업로드</label>
+    <div class="txt-upload">
+      <button class="cover-btn" onclick="document.getElementById('txtInput').click()">파일 선택</button>
+      <span class="txt-filename" id="txtFilename" style="margin-left:10px;font-size:13px;color:#64748b;"></span>
+      <button class="cover-remove" id="txtRemove" onclick="removeTxt()" style="display:none;">삭제</button>
+      <input type="file" id="txtInput" accept=".txt" style="display:none" onchange="handleTxt(this)">
+    </div>
+    <div class="hint" style="margin-top:8px;">추출기에서 다운받은 .txt 파일을 업로드하세요.</div>
   </div>
 
   <button class="build-btn" id="buildBtn" onclick="buildEpub()">이북 만들기</button>
@@ -387,6 +392,26 @@ ${textToHtml(body)}
 
 // UI
 let coverDataURL = null;
+let uploadedTxtContent = null;
+
+function handleTxt(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    uploadedTxtContent = e.target.result;
+    document.getElementById('txtFilename').textContent = file.name;
+    document.getElementById('txtRemove').style.display = 'inline';
+  };
+  reader.readAsText(file, 'UTF-8');
+}
+
+function removeTxt() {
+  uploadedTxtContent = null;
+  document.getElementById('txtFilename').textContent = '';
+  document.getElementById('txtRemove').style.display = 'none';
+  document.getElementById('txtInput').value = '';
+}
 
 function handleCover(input) {
   const file = input.files[0];
@@ -415,9 +440,9 @@ async function buildEpub() {
   const title = document.getElementById('metaTitle').value.trim();
   const author = document.getElementById('metaAuthor').value.trim();
   const character = document.getElementById('metaCharacter').value.trim();
-  const bodyText = document.getElementById('bodyText').value.trim();
+  const bodyText = uploadedTxtContent ? uploadedTxtContent.trim() : '';
 
-  if (!bodyText) { alert('본문 텍스트를 입력해주세요.'); return; }
+  if (!bodyText) { alert('TXT 파일을 업로드해주세요.'); return; }
 
   const btn = document.getElementById('buildBtn');
   btn.disabled = true;
