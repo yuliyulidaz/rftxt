@@ -22,9 +22,9 @@
   const cancelBtn = document.createElement('div');
   cancelBtn.textContent = '실행 취소';
   cancelBtn.style.cssText =
-    'margin-top:16px;padding:10px 32px;background:rgba(255,255,255,0.15);' +
-    'border:1px solid rgba(255,255,255,0.3);border-radius:6px;cursor:pointer;' +
-    'font-size:14px;transition:background 0.2s;';
+    'margin-top:12px;padding:5px 16px;background:rgba(255,255,255,0.15);' +
+    'border:1px solid rgba(255,255,255,0.3);border-radius:4px;cursor:pointer;' +
+    'font-size:11px;transition:background 0.2s;';
   cancelBtn.onmouseenter = function() { cancelBtn.style.background = 'rgba(255,80,80,0.5)'; };
   cancelBtn.onmouseleave = function() { cancelBtn.style.background = 'rgba(255,255,255,0.15)'; };
   let cancelled = false;
