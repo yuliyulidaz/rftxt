@@ -19,9 +19,21 @@
   const progressText = document.createElement('div');
   progressText.style.fontSize = '14px';
   progressText.style.opacity = '0.7';
+  const cancelBtn = document.createElement('div');
+  cancelBtn.textContent = '실행 취소';
+  cancelBtn.style.cssText =
+    'margin-top:16px;padding:10px 32px;background:rgba(255,255,255,0.15);' +
+    'border:1px solid rgba(255,255,255,0.3);border-radius:6px;cursor:pointer;' +
+    'font-size:14px;transition:background 0.2s;';
+  cancelBtn.onmouseenter = function() { cancelBtn.style.background = 'rgba(255,80,80,0.5)'; };
+  cancelBtn.onmouseleave = function() { cancelBtn.style.background = 'rgba(255,255,255,0.15)'; };
+  let cancelled = false;
+  cancelBtn.onclick = function() { cancelled = true; };
+
   overlay.appendChild(statusText);
   overlay.appendChild(statusText2);
   overlay.appendChild(progressText);
+  overlay.appendChild(cancelBtn);
   document.body.appendChild(overlay);
 
   function updateStatus(msg, msg2, detail) {
@@ -168,7 +180,7 @@
     return false; // 25초 동안 버튼 안 돌아옴
   }
 
-  while (clickCount < maxClicks) {
+  while (clickCount < maxClicks && !cancelled) {
     // 버튼 찾기 (없으면 15초까지 폴링 대기)
     let upBtn = findUpButton();
     if (!upBtn) {
@@ -218,6 +230,13 @@
         break;
       }
     }
+  }
+
+  if (cancelled) {
+    restoreUIElements();
+    updateStatus('실행이 취소되었습니다.', '', '클릭 ' + clickCount + '회 진행 후 취소');
+    setTimeout(() => overlay.remove(), 2000);
+    return;
   }
 
   if (clickCount >= maxClicks) exitReason = '최대 클릭 ' + maxClicks + '회 도달';
