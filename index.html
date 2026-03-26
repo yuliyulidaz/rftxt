@@ -242,6 +242,41 @@
     color: #0f172a;
   }
 
+  /* === Bubble tooltip === */
+  .version-card {
+    position: relative;
+  }
+  .bubble {
+    position: absolute;
+    top: -14px;
+    right: -10px;
+    background: #eff6ff;
+    color: #3b82f6;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+    white-space: nowrap;
+    animation: bubble-float 3s ease-in-out infinite;
+    z-index: 3;
+  }
+  .bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 20px;
+    width: 12px;
+    height: 12px;
+    background: #eff6ff;
+    transform: rotate(45deg);
+    border-radius: 2px;
+  }
+  @keyframes bubble-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+
   /* === FAQ === */
   .faq {
     margin-top: 8px;
@@ -396,6 +431,7 @@
     </div>
 
     <div class="version-card">
+      <div class="bubble">🧹 상태창 · 요약 · sub 태그 제거</div>
       <div class="version-tag clean">Clean</div>
       <div class="version-title">요약 제거</div>
       <div class="version-desc">상태창을 자동 제거하고 대화만 추출합니다.</div>
